@@ -9,7 +9,7 @@
   <xacro:property name="wheel_radius" value="0.055"/>
   <xacro:property name="wheel_width" value="0.06"/>
   <xacro:property name="wheel_ygap" value="0.008"/>
-  <xacro:property name="wheel_zoff" value="0.02"/>
+  <xacro:property name="wheel_zoff" value="0.00"/>
   <xacro:property name="wheel_xoff" value="0.085"/>
 
   <!-- Robot Base -->
