@@ -18,6 +18,9 @@
       <geometry>
         <box size="${base_length} ${base_width} ${base_height}"/>
       </geometry>
+      <material name="Cyan">
+        <color rgba="0 1.0 1.0 1.0"/>
+      </material>
     </visual>
 
     <collision>
@@ -44,6 +47,9 @@
         <geometry>
             <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
         </geometry>
+        <material name="Gray">
+          <color rgba="0.5 0.5 0.5 1.0"/>
+        </material>
       </visual>
 
       <collision>
