@@ -6,7 +6,6 @@ import os
 def generate_launch_description():
     pkg_share = launch_ros.substitutions.FindPackageShare(package='capo_description').find('capo_description')
     default_model_path = os.path.join(pkg_share, 'src/description/capo_description.urdf')
-    #default_rviz_config_path = os.path.join(pkg_share, 'rviz/urdf_config.rviz')
 
     robot_state_publisher_node = launch_ros.actions.Node(
         package='robot_state_publisher',
@@ -26,21 +25,10 @@ def generate_launch_description():
        parameters=[os.path.join(pkg_share, 'config/ekf.yaml')   ]
     )
 
-    # rviz_node = launch_ros.actions.Node(
-    #     package='rviz2',
-    #     executable='rviz2',
-    #     name='rviz2',
-    #     output='screen',
-    #     arguments=['-d', LaunchConfiguration('rvizconfig')],
-    # )
-
     return launch.LaunchDescription([
         launch.actions.DeclareLaunchArgument(name='model', default_value=default_model_path,
                                             description='Absolute path to robot urdf file'),
-        # launch.actions.DeclareLaunchArgument(name='rvizconfig', default_value=default_rviz_config_path,
-        #                                     description='Absolute path to rviz config file'),
         joint_state_publisher_node,
         robot_state_publisher_node,
         robot_localization_node
-        # rviz_node
     ])
