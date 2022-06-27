@@ -61,6 +61,8 @@ bt_navigator:
     # nav2_bt_navigator/navigate_to_pose_w_replanning_and_recovery.xml
     # nav2_bt_navigator/navigate_through_poses_w_replanning_and_recovery.xml
     # They can be set here or via a RewrittenYaml remap from a parent launch file to Nav2.
+    default_nav_to_pose_bt_xml: nav2_bt_navigator/navigate_to_pose_w_replanning_and_recovery.xml
+    transform_tolerance: 0.2
     plugin_lib_names:
     - nav2_compute_path_to_pose_action_bt_node
     - nav2_compute_path_through_poses_action_bt_node
@@ -129,14 +131,14 @@ controller_server:
     # RPP parameters
     FollowPath:
       plugin: "nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController"
-      desired_linear_vel: 0.74
+      desired_linear_vel: 1.2
       max_linear_accel: 1.0
       max_linear_decel: 1.0
       lookahead_dist: 0.6
       min_lookahead_dist: 0.3
       max_lookahead_dist: 0.9
       lookahead_time: 1.5
-      rotate_to_heading_angular_vel: 1.8
+      rotate_to_heading_angular_vel: 0.8
       transform_tolerance: 0.1
       use_velocity_scaled_lookahead_dist: false
       min_approach_linear_velocity: 0.05
@@ -152,6 +154,7 @@ controller_server:
       cost_scaling_dist: 0.3
       cost_scaling_gain: 1.0
       inflation_cost_scaling_factor: 3.0
+      
       
 controller_server_rclcpp_node:
   ros__parameters:
@@ -170,11 +173,11 @@ local_costmap:
       height: 3
       resolution: 0.05
       footprint: "[ [0.169, 0.14], [0.169, -0.14], [-0.169, -0.14], [-0.169, 0.14] ]"
-      plugins: ["voxel_layer", "inflation_layer"]
+      plugins: ["voxel_layer", "inflation_layer", "statick_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.55
+        inflation_radius: 0.30
       voxel_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
         enabled: True
@@ -239,7 +242,7 @@ global_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.55
+        inflation_radius: 0.30
       always_send_full_costmap: True
   global_costmap_client:
     ros__parameters:
@@ -251,7 +254,7 @@ global_costmap:
 map_server:
   ros__parameters:
     use_sim_time: false
-    yaml_filename: "map.yaml"
+    yaml_filename: "/home/ubuntu/map.yaml"
 
 map_saver:
   ros__parameters:
@@ -267,10 +270,10 @@ planner_server:
     use_sim_time: false
     planner_plugins: ["GridBased"]
     GridBased:
-      plugin: "nav2_theta_star_planner/ThetaStarPlanner"
-      how_many_corners: 8
-      w_euc_cost: 1.0
-      w_traversal_cost: 2.0
+      plugin: "nav2_navfn_planner/NavfnPlanner"
+      tolerance: 0.5
+      use_astar: false
+      allow_unknown: true
 
 planner_server_rclcpp_node:
   ros__parameters:
@@ -281,7 +284,9 @@ recoveries_server:
     costmap_topic: local_costmap/costmap_raw
     footprint_topic: local_costmap/published_footprint
     cycle_frequency: 10.0
-    recovery_plugins: ["backup", "wait"]
+    recovery_plugins: ["spin", "backup", "wait"]
+    spin:
+      plugin: "nav2_recoveries/Spin"
     backup:
       plugin: "nav2_recoveries/BackUp"
     wait:
