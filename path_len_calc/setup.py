@@ -20,6 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'calc = path_len_calc.path_len_node:main',
         ],
     },
 )
