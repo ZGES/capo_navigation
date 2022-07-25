@@ -5,18 +5,18 @@ from nav_msgs.msg import Path
 import math
 
 
-class PathLen_Node(Node):
+class Metrics_Collector_Node(Node):
 
     def __init__(self):
-        super().__init__('path_len_node')
+        super().__init__('metrics_collector_node')
         self.subscription = self.create_subscription(
             Path,
             'plan',
-            self.length_calc,
+            self.path_collect,
             10)
         self.subscription  # prevent unused variable warning
     
-    def path_len(poses):
+    def path_len(self, poses):
         len = 0
         
         prev_x = 0
@@ -31,10 +31,10 @@ class PathLen_Node(Node):
             prev_x = x
             prev_y = y
 
-        start_time_secs = poses[0].header.stamp.secs
-        start_time_nsecs = poses[0].header.stamp.nsecs
-        end_time_secs = poses[-1].header.stamp.secs
-        end_time_nsecs = poses[-1].header.stamp.nsecs
+        start_time_secs = poses[0].header.stamp.sec
+        start_time_nsecs = poses[0].header.stamp.nanosec
+        end_time_secs = poses[-1].header.stamp.sec
+        end_time_nsecs = poses[-1].header.stamp.nanosec
 
         d_secs = end_time_secs - start_time_secs
         d_nsecs = end_time_nsecs - start_time_nsecs
@@ -43,26 +43,26 @@ class PathLen_Node(Node):
 
         return len, duration
 
-    def length_calc(self, msg):
+    def path_collect(self, msg):
         stamp = msg.header.stamp
         poses = msg.poses
 
         len, duration = self.path_len(poses)
 
-        self.get_logger().info('At time: {}.{} calculated path of length {}m. It took {}s to calculate.'.format(stamp.secs, stamp.nsecs, len, duration))
+        self.get_logger().info('At time: {}.{} calculated path of length {}m. It took {}s to calculate.'.format(stamp.sec, stamp.nanosec, len, duration))
 
 
 def main(args=None):
     rclpy.init(args=args)
 
-    path_len_node = PathLen_Node()
+    metrics_collector_node = Metrics_Collector_Node()
 
-    rclpy.spin(path_len_node)
+    rclpy.spin(metrics_collector_node)
 
     # Destroy the node explicitly
     # (optional - otherwise it will be done automatically
     # when the garbage collector destroys the node object)
-    path_len_node.destroy_node()
+    metrics_collector_node.destroy_node()
     rclpy.shutdown()
 
 
