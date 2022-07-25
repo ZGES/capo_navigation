@@ -1,7 +1,8 @@
 import rclpy
 from rclpy.node import Node
 
-from nav_msgs.msg import Path
+from nav_msgs.msg import Path, Odometry
+from builtin_interfaces.msg import Duration
 import math
 
 
@@ -9,18 +10,35 @@ class Metrics_Collector_Node(Node):
 
     def __init__(self):
         super().__init__('metrics_collector_node')
-        self.subscription = self.create_subscription(
+        self.currX = 0
+        self.currY = 0
+
+        self.path_sub = self.create_subscription(
             Path,
             'plan',
             self.path_collect,
             10)
-        self.subscription  # prevent unused variable warning
+        self.path_sub  # prevent unused variable warning
+
+        self.duration_sub = self.create_subscription(
+            Duration,
+            'duration',
+            self.duration_collect,
+            10)
+        self.duration_sub  # prevent unused variable warning
+
+        self.odom_sub = self.create_subscription(
+            Odometry,
+            'capo/odom',
+            self.save_position,
+            10)
+        self.odom_sub  # prevent unused variable warning
     
     def path_len(self, poses):
         len = 0
         
-        prev_x = 0
-        prev_y = 0
+        prev_x = self.currX
+        prev_y = self.currY
         for pose in poses:
             x = pose.pose.position.x
             y = pose.pose.position.y
@@ -31,26 +49,25 @@ class Metrics_Collector_Node(Node):
             prev_x = x
             prev_y = y
 
-        start_time_secs = poses[0].header.stamp.sec
-        start_time_nsecs = poses[0].header.stamp.nanosec
-        end_time_secs = poses[-1].header.stamp.sec
-        end_time_nsecs = poses[-1].header.stamp.nanosec
+        return len
 
-        d_secs = end_time_secs - start_time_secs
-        d_nsecs = end_time_nsecs - start_time_nsecs
 
-        duration = d_secs + d_nsecs * 1e-9
+    def path_collect(self, path):
+        stamp = path.header.stamp
+        poses = path.poses
 
-        return len, duration
+        len = self.path_len(poses)
 
-    def path_collect(self, msg):
-        stamp = msg.header.stamp
-        poses = msg.poses
+        self.get_logger().info('[PATH] Calculated path of length {}m at timestamp {}.{}s'.format(len, stamp.sec, stamp.nanosec))
 
-        len, duration = self.path_len(poses)
 
-        self.get_logger().info('At time: {}.{} calculated path of length {}m. It took {}s to calculate.'.format(stamp.sec, stamp.nanosec, len, duration))
+    def duration_collect(self, duration):
+        self.get_logger().info('[DURATION] It took {}.{}s to plan the path'.format(duration.sec, duration.nanosec))
 
+
+    def save_position(self, odom):
+        self.currX = odom.pose.pose.position.x
+        self.currY = odom.pose.pose.position.y
 
 def main(args=None):
     rclpy.init(args=args)
