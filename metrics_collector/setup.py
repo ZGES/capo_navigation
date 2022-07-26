@@ -1,6 +1,6 @@
 from setuptools import setup
 
-package_name = 'metrics_collcetor'
+package_name = 'metrics_collector'
 
 setup(
     name=package_name,
