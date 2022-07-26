@@ -20,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'metric = metrics_collector.metric_collectors_node:main',
+            'metric = metrics_collector.metrics_collector_node:main',
         ],
     },
 )
