@@ -10,8 +10,6 @@ class Metrics_Collector_Node(Node):
 
     def __init__(self):
         super().__init__('metrics_collector_node')
-        self.currX = 0
-        self.currY = 0
 
         self.path_sub = self.create_subscription(
             Path,
@@ -26,20 +24,13 @@ class Metrics_Collector_Node(Node):
             self.duration_collect,
             10)
         self.duration_sub  # prevent unused variable warning
-
-        self.odom_sub = self.create_subscription(
-            Odometry,
-            'capo/odom',
-            self.save_position,
-            10)
-        self.odom_sub  # prevent unused variable warning
     
     def path_len(self, poses):
         len = 0
         
-        prev_x = self.currX
-        prev_y = self.currY
-        for pose in poses:
+        prev_x = poses[0].pose.position.x
+        prev_y = poses[0].pose.position.y
+        for pose in poses[1::]:
             x = pose.pose.position.x
             y = pose.pose.position.y
 
