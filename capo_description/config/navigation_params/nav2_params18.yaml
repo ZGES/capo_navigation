@@ -117,9 +117,9 @@ controller_server:
     # RPP parameters
     FollowPath:
       plugin: "nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController"
-      desired_linear_vel: 1.2
+      desired_linear_vel: 0.2
       max_linear_accel: 1.0
-      max_linear_decel: 1.0
+      max_linear_decel: -1.0
       lookahead_dist: 0.6
       min_lookahead_dist: 0.3
       max_lookahead_dist: 0.9
@@ -137,7 +137,7 @@ controller_server:
       use_rotate_to_heading: false
       rotate_to_heading_min_angle: 0.785
       max_angular_accel: 0.8
-      cost_scaling_dist: 0.3
+      cost_scaling_dist: 0.2
       cost_scaling_gain: 1.0
       inflation_cost_scaling_factor: 3.0
       
@@ -162,7 +162,7 @@ local_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.30
+        inflation_radius: 0.20
       voxel_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
         enabled: True
@@ -218,7 +218,7 @@ global_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.30
+        inflation_radius: 0.20
       always_send_full_costmap: True
   global_costmap_client:
     ros__parameters:
