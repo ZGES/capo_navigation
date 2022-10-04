@@ -1,10 +1,10 @@
 amcl:
   ros__parameters:
     use_sim_time: false
-    alpha1: 0.2
-    alpha2: 0.2
-    alpha3: 0.2
-    alpha4: 0.2
+    alpha1: 0.007
+    alpha2: 0.007
+    alpha3: 0.007
+    alpha4: 0.007
     base_frame_id: "base_footprint"
     beam_skip_distance: 0.5
     beam_skip_error_threshold: 0.9
@@ -27,12 +27,12 @@ amcl:
     resample_interval: 1
     robot_model_type: "differential"
     save_pose_rate: 0.5
-    sigma_hit: 0.2
+    sigma_hit: 0.25
     tf_broadcast: true
     transform_tolerance: 1.0
     update_min_a: 0.2
     update_min_d: 0.25
-    z_hit: 0.5
+    z_hit: 0.6
     z_max: 0.05
     z_rand: 0.5
     z_short: 0.05
@@ -117,26 +117,26 @@ controller_server:
     # RPP parameters
     FollowPath:
       plugin: "nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController"
-      desired_linear_vel: 0.2
+      desired_linear_vel: 0.4
       max_linear_accel: 1.0
       max_linear_decel: -1.0
-      lookahead_dist: 0.6
-      min_lookahead_dist: 0.3
-      max_lookahead_dist: 0.9
+      lookahead_dist: 2.0
+      min_lookahead_dist: 1.0
+      max_lookahead_dist: 1.9
       lookahead_time: 1.5
       rotate_to_heading_angular_vel: 0.8
       transform_tolerance: 0.1
       use_velocity_scaled_lookahead_dist: false
-      min_approach_linear_velocity: 0.05
+      min_approach_linear_velocity: 0.1
       use_approach_linear_velocity_scaling: true
       max_allowed_time_to_collision: 1.0
       use_regulated_linear_velocity_scaling: true
       use_cost_regulated_linear_velocity_scaling: false
-      regulated_linear_scaling_min_radius: 0.9
+      regulated_linear_scaling_min_radius: 0.1
       regulated_linear_scaling_min_speed: 0.25
       use_rotate_to_heading: false
       rotate_to_heading_min_angle: 0.785
-      max_angular_accel: 0.8
+      max_angular_accel: 1.0
       cost_scaling_dist: 0.2
       cost_scaling_gain: 1.0
       inflation_cost_scaling_factor: 3.0
@@ -249,7 +249,7 @@ planner_server:
       plugin: "nav2_navfn_planner/NavfnPlanner"
       tolerance: 0.5
       use_astar: true
-      allow_unknown: true
+      allow_unknown: false
 
 planner_server_rclcpp_node:
   ros__parameters:
