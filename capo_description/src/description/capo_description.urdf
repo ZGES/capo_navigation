@@ -11,6 +11,11 @@
   <xacro:property name="wheel_ygap" value="0.008"/>
   <xacro:property name="wheel_zoff" value="0.00"/>
   <xacro:property name="wheel_xoff" value="0.085"/>
+  
+  <xacro:property name="caster_xoff" value ="0.105"/>
+  <xacro:property name="caster_yoff" value ="0.08"/>
+  <xacro:property name="caster_zoff" value ="0.014"/>
+  <xacro:property name="caster_radius" value ="0.01"/>
 
   <!-- Robot Base -->
   <link name="base_link">
@@ -63,36 +68,67 @@
     <joint name="${prefix}_joint" type="continuous">
       <parent link="base_link"/>
       <child link="${prefix}_link"/>
-      <origin xyz="${x_reflect*wheel_xoff} ${y_reflect*(base_width/2+wheel_ygap+wheel_radius/2)} ${-wheel_zoff}" rpy="0 0 0"/>
+      <origin xyz="${x_reflect*wheel_xoff} ${y_reflect*(base_width/2+wheel_ygap+wheel_width/2)} ${-wheel_zoff}" rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
     </joint>
   </xacro:macro>
 
-  <xacro:wheel prefix="front_l" x_reflect="1" y_reflect="1" />
-  <xacro:wheel prefix="front_r" x_reflect="1" y_reflect="-1" />
-  <xacro:wheel prefix="rear_l" x_reflect="-1" y_reflect="1" />
-  <xacro:wheel prefix="rear_r" x_reflect="-1" y_reflect="-1" />
+  <!--  <xacro:wheel prefix="front_l" x_reflect="1" y_reflect="1" />
+  <xacro:wheel prefix="front_r" x_reflect="1" y_reflect="-1" /> -->
+  <xacro:wheel prefix="left_wheel" x_reflect="-1" y_reflect="1" />
+  <xacro:wheel prefix="right_wheel" x_reflect="-1" y_reflect="-1" />
 
-<link name="lidar_link">
-  <visual>
-    <origin xyz="0 0 0" rpy="0 0 0"/>
-    <geometry>
-       <cylinder radius="0.0235" length="0.07"/>
-    </geometry>
-  </visual>
+  <!-- Caster wheels -->
+  <xacro:macro name="caster" params="prefix x_reflect y_reflect">
+    <link name="${prefix}_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+        <geometry>
+            <sphere radius="${caster_radius}"/>
+        </geometry>
+        <material name="Gray">
+          <color rgba="0.5 0.5 0.5 1.0"/>
+        </material>
+      </visual>
 
-  <collision>
-    <origin xyz="0 0 0" rpy="0 0 0"/>
-    <geometry>
-       <cylinder radius="0.0235" length="0.07"/>
-    </geometry>
-  </collision>
-</link>
+      <collision>
+        <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+        <geometry>
+            <sphere radius="${caster_radius}"/>
+        </geometry>
+      </collision>
+    </link>
 
-<joint name="lidar_joint" type="fixed">
-  <parent link="base_link"/>
-  <child link="lidar_link"/>
-  <origin xyz="0.0185 0 ${base_height/2+0.035}" rpy="0 0 0"/>
-</joint>
+    <joint name="${prefix}_joint" type="fixed">
+      <parent link="base_link"/>
+      <child link="${prefix}_link"/>
+      <origin xyz="${x_reflect*caster_xoff} ${y_reflect*caster_yoff} ${-caster_zoff-base_height/2}" rpy="0 0 0"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:caster prefix="left_caster" x_reflect="1" y_reflect="1" />
+  <xacro:caster prefix="right_caster" x_reflect="1" y_reflect="-1" />
+
+  <link name="lidar_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.0235" length="0.07"/>
+      </geometry>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.0235" length="0.07"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="lidar_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="lidar_link"/>
+    <origin xyz="0.0185 0 ${base_height/2+0.035}" rpy="0 0 0"/>
+  </joint>
 
 </robot>
